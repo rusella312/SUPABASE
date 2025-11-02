@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       await supabase.auth.signInWithOtp(
         email: email,
         emailRedirectTo: kIsWeb
-            ? null
+            ? 'http://localhost:3000'
             : 'io.supabase.buildausermanagement://login-callback/',
         shouldCreateUser: true,
       );
@@ -123,118 +123,127 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final screenHeight = MediaQuery.of(context).size.height;
+    
     return Scaffold(
-      backgroundColor: const Color(
-        0xFF2D2D2D,
-      ), // Fondo gris oscuro como en la imagen
+      backgroundColor: const Color(0xFF2D2D2D),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 60),
-              // Título principal
-              const Text(
-                'Sign In',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: screenHeight - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: isPortrait ? 24.0 : 40.0,
+                vertical: isPortrait ? 20.0 : 30.0,
               ),
-              const SizedBox(height: 40),
-              // Descripción
-              const Text(
-                'Sign in via the magic link with your email below',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 60),
-              // Campo de email
-              Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(height: isPortrait ? 40.0 : 20.0),
+                  // Título principal
                   const Text(
-                    'Email',
+                    'Sign In',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: isPortrait ? 24.0 : 16.0),
+                  // Descripción
+                  const Text(
+                    'Sign in via the magic link with your email below',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
-                      fontWeight: FontWeight.w500,
+                      height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: TextFormField(
-                      controller: _emailController,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 16),
-                        hintText: 'Enter your email',
-                        hintStyle: TextStyle(
-                          color: Colors.white38,
+                  SizedBox(height: isPortrait ? 40.0 : 30.0),
+                  // Campo de email
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Email',
+                        style: TextStyle(
                           fontSize: 16,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      keyboardType: TextInputType.emailAddress,
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: TextFormField(
+                          controller: _emailController,
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 16),
+                            hintText: 'Enter your email',
+                            hintStyle: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 16,
+                            ),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: isPortrait ? 40.0 : 30.0),
+                  // Botón de enviar magic link
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _signIn,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4CAF50),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        elevation: 0,
+                        disabledBackgroundColor: const Color(0xFF4CAF50).withOpacity(0.6),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'Send Magic Link',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                     ),
                   ),
+                  SizedBox(height: isPortrait ? 20.0 : 30.0),
                 ],
               ),
-              const SizedBox(height: 60),
-              // Botón de enviar magic link
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _signIn,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(
-                      0xFF4CAF50,
-                    ), // Verde como en la imagen
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    elevation: 0,
-                    disabledBackgroundColor: const Color(
-                      0xFF4CAF50,
-                    ).withOpacity(0.6),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text(
-                          'Send Magic Link',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                ),
-              ),
-              const Spacer(),
-            ],
+            ),
           ),
         ),
       ),

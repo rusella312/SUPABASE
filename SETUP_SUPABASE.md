@@ -28,6 +28,41 @@
 4. ✅ Marca "Public bucket"
 5. Haz clic en "Save"
 
+## ✅ PASO 5: Configurar Storage para Avatares (Políticas)
+
+En el panel de Supabase que tienes abierto:
+
+1. **Crear el bucket:**
+   - En la barra lateral izquierda, busca y haz clic en "Storage" (ícono de archivos)
+   - Haz clic en "Create a new bucket"
+   - Nombre del bucket: `avatars`
+   - Haz clic en "Create bucket"
+
+2. **Configurar las políticas del bucket:**
+   - Una vez que hayas creado el bucket, haz clic en el bucket "avatars" que acabas de crear
+   - Ve a la pestaña "Policies"
+   - Haz clic en "New Policy"
+   - Selecciona "For full customization"
+   - Pega este código SQL:
+
+```sql
+-- Allow users to upload their own avatar
+CREATE POLICY "Users can upload their own avatar" ON storage.objects
+FOR INSERT WITH CHECK (auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Allow users to update their own avatar
+CREATE POLICY "Users can update their own avatar" ON storage.objects
+FOR UPDATE USING (auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Allow users to view their own avatar
+CREATE POLICY "Users can view their own avatar" ON storage.objects
+FOR SELECT USING (auth.uid()::text = (storage.foldername(name))[1]);
+```
+
+   - Haz clic en "Review" y luego "Save policy"
+
+**Nota:** También puedes copiar el contenido del archivo `storage_policies.sql` incluido en este proyecto.
+
 ## ✅ PASO 4: Obtener Credenciales
 
 1. Ve a "Settings" > "API" (ícono de engranaje)
@@ -43,7 +78,7 @@ https://[tu-proyecto-id].supabase.co
 eyJ0... (una clave muy larga)
 ```
 
-## ✅ PASO 5: Configurar Authentication
+## ✅ PASO 6: Configurar Authentication
 
 1. Ve a "Authentication" > "URL Configuration"
 2. En "Redirect URLs", agrega:
@@ -52,7 +87,7 @@ io.supabase.buildausermanagement://login-callback/
 ```
 3. Haz clic en "Save"
 
-## ✅ PASO 6: Configurar la App Flutter
+## ✅ PASO 7: Configurar la App Flutter
 
 1. Abre el archivo `lib/main.dart`
 2. Reemplaza estas líneas:
@@ -72,7 +107,7 @@ await Supabase.initialize(
 );
 ```
 
-## ✅ PASO 7: Probar la Aplicación
+## ✅ PASO 8: Probar la Aplicación
 
 1. Abre terminal en la carpeta del proyecto
 2. Ejecuta:
