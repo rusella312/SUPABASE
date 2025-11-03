@@ -36,6 +36,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   supabase_flutter: ^2.0.0
   image_picker: ^1.0.5
+  # State management para app de tareas
+  flutter_riverpod: ^2.4.9
+  # Code generation para modelos
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +52,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  # Code generation tools
+  build_runner: ^2.4.7
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:buildausermanagement/pages/account_page.dart';
 import 'package:buildausermanagement/pages/login_page.dart';
+import 'package:buildausermanagement/pages/account_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://yqgubmplrhznbfnvqhwr.supabase.co',
+    url: 'https://qmgzctiwvnvliyjbsfgp.supabase.co',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxZ3VibXBscmh6bmJmbnZxaHdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3MzMxMTIsImV4cCI6MjA3NzMwOTExMn0.U1FWiP4bCwigankauC9xkIAvfoj9SikfViFY8lxNerc',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtZ3pjdGl3dm52bGl5amJzZmdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2OTExMjgsImV4cCI6MjA3NzI2NzEyOH0.kD5iES4wULRHen2QoMqjCaPbvvjI1eQRmFPs5ZE8zwE',
     authOptions: const FlutterAuthClientOptions(
       authFlowType: AuthFlowType.pkce,
     ),
@@ -21,7 +22,11 @@ Future<void> main() async {
     ),
   );
   
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 final supabase = Supabase.instance.client;

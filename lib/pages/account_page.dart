@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:buildausermanagement/components/avatar.dart';
 import 'package:buildausermanagement/main.dart';
 import 'package:buildausermanagement/pages/login_page.dart';
+import 'package:buildausermanagement/features/tasks/presentation/pages/tasks_list_page.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -98,7 +99,13 @@ class _AccountPageState extends State<AccountPage> {
     };
     try {
       await supabase.from('profiles').upsert(updates);
-      if (mounted) context.showSnackBar('Successfully updated profile!');
+      if (mounted) {
+        context.showSnackBar('Successfully updated profile!');
+        // Navegar a TasksListPage después de actualizar
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const TasksListPage()),
+        );
+      }
     } on PostgrestException catch (error) {
       if (mounted) context.showSnackBar(error.message, isError: true);
     } catch (error) {
@@ -210,6 +217,21 @@ class _AccountPageState extends State<AccountPage> {
           ElevatedButton(
             onPressed: _loading ? null : _updateProfile,
             child: Text(_loading ? 'Saving...' : 'Update'),
+          ),
+          const SizedBox(height: 12),
+          // Botón para ir directamente a tareas sin actualizar
+          ElevatedButton(
+            onPressed: _loading
+                ? null
+                : () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const TasksListPage()),
+                    );
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+            ),
+            child: const Text('Ir a Tareas'),
           ),
           const SizedBox(height: 18),
           TextButton(onPressed: _signOut, child: const Text('Sign Out')),
